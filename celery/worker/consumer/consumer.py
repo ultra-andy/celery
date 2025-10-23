@@ -220,6 +220,7 @@ class Consumer:
             self.amqheartbeat = 0
 
         if not hasattr(self, 'loop'):
+            logger.info('celery.worker.consumer.consumer.py - in Consumer.__init___(...), about to set self.loop = loops.asynloop')
             self.loop = loops.asynloop if hub else loops.synloop
 
         if _detect_environment() == 'gevent':
@@ -272,6 +273,8 @@ class Consumer:
             of +1 if the initial size of the pool was 0 (e.g.
             :option:`--autoscale=1,0 <celery worker --autoscale>`).
         """
+        logger.info(f'celery.worker.consumer.consumer.py: Consumer._update_prefetch_count() called - {index = }')
+
         num_processes = self.pool.num_processes
         if not self.initial_prefetch_count or not num_processes:
             return  # prefetch disabled
@@ -281,6 +284,7 @@ class Consumer:
         return self._update_qos_eventually(index)
 
     def _update_qos_eventually(self, index):
+        logger.info(f'celery.worker.consumer.consumer.py: Consumer._update_qos_eventually() called - {index = } {self.prefetch_multiplier = }')
         return (self.qos.decrement_eventually if index < 0
                 else self.qos.increment_eventually)(
             abs(index) * self.prefetch_multiplier)
@@ -339,6 +343,8 @@ class Consumer:
                 recoverable_errors = self.connection_errors
             try:
                 blueprint.start(self)
+                logger.info('celery.worker.consumer.consumer.py: Consumer.start(...) called...')
+
             except recoverable_errors as exc:
                 # If we're not retrying connections, we need to properly shutdown or terminate
                 # the Celery main process instead of abruptly aborting the process without any cleanup.
@@ -685,6 +691,8 @@ class Consumer:
                         reject_log_error_promise.then(self._restore_prefetch_count_after_connection_restart,
                                                       on_error=self._restore_prefetch_count_after_connection_restart)
 
+                    logger.info(f'celery.worker.consumer.consumer.py: Consumer.create_task_handler() called, about to call strategy({message = }, {payload = }, {ack_log_error_promise = }, {reject_log_error_promise = }, {callbacks = })')
+
                     strategy(
                         message, payload,
                         ack_log_error_promise,
@@ -768,6 +776,7 @@ class Evloop(bootsteps.StartStopStep):
     last = True
 
     def start(self, c):
+        logger.info('celery.worker.consumer.consumer.py: Evloop.start(...) called...')
         self.patch_all(c)
         c.loop(*c.loop_args())
 

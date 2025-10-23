@@ -535,6 +535,8 @@ def pool_grow(state, n=1, **kwargs):
     if state.consumer.controller.autoscaler:
         return nok("pool_grow is not supported with autoscale. Adjust autoscale range instead.")
     else:
+        logger.info(f'celery.worker.control.py: in pool_grow(), about to call state.consumer._update_prefetch_count({n})')
+
         state.consumer.pool.grow(n)
         state.consumer._update_prefetch_count(n)
     return ok('pool will grow')

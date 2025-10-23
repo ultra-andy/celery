@@ -71,6 +71,7 @@ class StepFormatter(GraphFormatter):
         return self.draw_edge(a, b, self.edge_scheme, attrs)
 
 
+# https://docs.celeryq.dev/en/stable/userguide/extending.html#blueprints
 class Blueprint:
     """Blueprint containing bootsteps that can be applied to objects.
 
@@ -114,6 +115,7 @@ class Blueprint:
             self._debug('Starting %s', step.alias)
             self.started = i + 1
             step.start(parent)
+            logger.info('celery.bootsteps.py - Blueprint.start(...) called...')
             logger.debug('^-- substep ok')
 
     def human_state(self):
@@ -361,6 +363,7 @@ class StartStopStep(Step):
     obj = None
 
     def start(self, parent):
+        logger.info('celery.bootsteps.py - StartStopStep.start(...) called...')
         if self.obj:
             return self.obj.start()
 

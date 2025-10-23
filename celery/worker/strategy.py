@@ -131,6 +131,9 @@ def default(task, app, consumer,
 
     def task_message_handler(message, body, ack, reject, callbacks,
                              to_timestamp=to_timestamp):
+
+        logger.info(f'celery.worker.stategy.py: default.task_message_handler...) called')
+
         if body is None and 'args' not in message.payload:
             body, headers, decoded, utc = (
                 message.body, message.headers, False, app.uses_utc_timezone(),
@@ -190,11 +193,16 @@ def default(task, app, consumer,
         if rate_limits_enabled:
             bucket = get_bucket(task.name)
 
+        logger.info(f'celery.worker.stategy.py: {eta = }')
+        logger.info(f'celery.worker.stategy.py: {bucket = }')
+
         if eta and bucket:
+            logger.info('celery.worker.stategy.py: default.task_message_handler() called, eta and bucket, about to call consumer.qos.increment_eventually()')
             consumer.qos.increment_eventually()
             return call_at(eta, limit_post_eta, (req, bucket, 1),
                            priority=6)
         if eta:
+            logger.info('celery.worker.stategy.py: default.task_message_handler() called, eta, about to call consumer.qos.increment_eventually()')
             consumer.qos.increment_eventually()
             call_at(eta, apply_eta_task, (req,), priority=6)
             return task_message_handler

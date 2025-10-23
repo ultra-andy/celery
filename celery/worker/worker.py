@@ -199,6 +199,8 @@ class WorkController:
         signals.worker_shutdown.send(sender=self)
 
     def start(self):
+        logger.info('celery.worker.worker.py: WorkController.start() called...')
+
         try:
             self.blueprint.start(self)
         except WorkerTerminate:

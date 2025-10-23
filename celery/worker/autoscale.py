@@ -133,6 +133,8 @@ class Autoscaler(bgThread):
     def _update_consumer_prefetch_count(self, new_max):
         diff = new_max - self.max_concurrency
         if diff:
+            logger.info(f'celery.worker.autoscale.py: in _update_consumer_prefetch_count(), about to call self.worker.consumer._update_prefetch_count({diff})')
+
             self.worker.consumer._update_prefetch_count(
                 diff
             )

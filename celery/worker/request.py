@@ -64,6 +64,7 @@ revoked_tasks = state.revoked
 revoked_stamps = state.revoked_stamps
 
 
+# https://docs.celeryq.dev/en/stable/userguide/tasks.html#requests-and-custom-requests
 class Request:
     """A request for task execution."""
 

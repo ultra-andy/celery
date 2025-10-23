@@ -50,6 +50,8 @@ def _enable_amqheartbeats(timer, connection, rate=2.0):
 def asynloop(obj, connection, consumer, blueprint, hub, qos,
              heartbeat, clock, hbrate=2.0):
     """Non-blocking event loop."""
+    logger.info('celery.worker.loops.py - asynloop() called...')
+
     RUN = bootsteps.RUN
     update_qos = qos.update
     errors = connection.connection_errors
@@ -82,7 +84,9 @@ def asynloop(obj, connection, consumer, blueprint, hub, qos,
     loop = hub.create_loop()
 
     try:
+        logger.info('celery.worker.loops.py - asynloop() - about to do while...') # This loop keeps on going. Why?
         while blueprint.state == RUN and obj.connection:
+            logger.info(f'celery.worker.loops.py - asynloop() - next while - {qos.value = }, {qos.prev = }')
             state.maybe_shutdown()
             if heartbeat_error[0] is not None:
                 raise heartbeat_error[0]
